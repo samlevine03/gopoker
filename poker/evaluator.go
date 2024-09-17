@@ -41,11 +41,44 @@ func (e *Evaluator) _five(cards []uint32) int {
 
 // _seven evaluates all 7 choose 5 combinations of a 7-card hand
 func (e *Evaluator) _seven(cards []uint32) int {
+	// Check for flush possibility
+	suitCounts := [4]int{}
+	for _, card := range cards {
+		suit := (card >> 12) & 0xF
+		if suit < 4 { // Ensure suit is valid
+			suitCounts[suit]++
+		}
+	}
+
+	for suit, count := range suitCounts {
+		if count >= 5 {
+			flushCards := make([]uint32, 0, 7)
+			for _, card := range cards {
+				if int(card>>12&0xF) == suit {
+					flushCards = append(flushCards, card)
+				}
+			}
+			return e._flushSeven(flushCards)
+		}
+	}
+
 	minScore := LookupTableMaxHighCard
 	combinations := Combinations(cards, 5)
 
 	for _, combo := range combinations {
-		score := e._five([]uint32{uint32(combo[0]), uint32(combo[1]), uint32(combo[2]), uint32(combo[3]), uint32(combo[4])})
+		score := e._five(combo)
+		if score < minScore {
+			minScore = score
+		}
+	}
+	return minScore
+}
+
+func (e *Evaluator) _flushSeven(flushCards []uint32) int {
+	minScore := LookupTableMaxHighCard
+	combinations := Combinations(flushCards, 5)
+	for _, combo := range combinations {
+		score := e._five(combo)
 		if score < minScore {
 			minScore = score
 		}
