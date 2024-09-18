@@ -1,5 +1,9 @@
 package poker
 
+import (
+	"runtime"
+)
+
 type Calculator struct {
 	deck      *Deck
 	evaluator *Evaluator
@@ -34,7 +38,7 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	results := make(chan [2][]int, totalBoards) // 2D array, first is wins, second is ties
 
 	// Set up a worker pool with goroutines
-	numWorkers := 10 // TODO: make this configurable / dynamic?
+	numWorkers := runtime.GOMAXPROCS(0)
 	boardChunks := chunkBoards(possibleBoards, numWorkers)
 
 	for _, boardChunk := range boardChunks {
