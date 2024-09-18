@@ -32,12 +32,12 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	numPlayers := len(playerHands)
 	totalBoards := len(possibleBoards)
 
-	// Use a channel to collect results
-	results := make(chan [2][]int, totalBoards) // 2D array, first is wins, second is ties
-
 	// Set up a worker pool with goroutines
 	numWorkers := runtime.GOMAXPROCS(0)
 	boardChunks := chunkBoards(possibleBoards, numWorkers)
+
+	// Use a channel to collect results
+	results := make(chan [2][]int, totalBoards) // 2D array, first is wins, second is ties
 
 	var wg sync.WaitGroup
 	wg.Add(len(boardChunks))
@@ -51,33 +51,27 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 
 			for _, board := range boardChunk {
 				bestScore := LookupTableMaxHighCard + 1
+				winners := 0
 
-				// Evaluate each player's hand
 				for i, hand := range playerHands {
 					scores[i] = c.evaluator.Evaluate(hand, board)
 					if scores[i] < bestScore {
 						bestScore = scores[i]
-					}
-				}
-
-				// Count winners and check for ties
-				winners := 0
-				for i := 0; i < numPlayers; i++ {
-					if scores[i] == bestScore {
+						winners = 1
+					} else if scores[i] == bestScore {
 						winners++
 					}
 				}
 
-				// If more than one player has the best score, it's a tie
 				if winners > 1 {
-					for i := 0; i < numPlayers; i++ {
-						if scores[i] == bestScore {
+					for i, score := range scores {
+						if score == bestScore {
 							localTies[i]++
 						}
 					}
 				} else {
-					for i := 0; i < numPlayers; i++ {
-						if scores[i] == bestScore {
+					for i, score := range scores {
+						if score == bestScore {
 							localWins[i]++
 							break
 						}
