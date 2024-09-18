@@ -31,6 +31,7 @@ var LookupTableMaxToRankClass = map[int]int{
 	LookupTableMaxHighCard:      9,
 }
 
+// NewLookupTable creates and returns a new lookup table
 func NewLookupTable() *LookupTable {
 	table := &LookupTable{
 		flushLookup:    make(map[int]int),

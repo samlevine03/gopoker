@@ -31,8 +31,8 @@ func (e *Evaluator) _five(cards []uint32) int {
 	flush := cards[0] & cards[1] & cards[2] & cards[3] & cards[4] & 0xF000
 
 	if flush != 0 {
-		handOR := (cards[0] | cards[1] | cards[2] | cards[3] | cards[4]) >> 16
-		prime := PrimeProductFromRankBits(int(handOR))
+		handOR := int(cards[0]|cards[1]|cards[2]|cards[3]|cards[4]) >> 16
+		prime := PrimeProductFromRankBits(handOR)
 		return e.table.flushLookup[prime]
 	}
 	prime := PrimeProductFromHand(cards)
