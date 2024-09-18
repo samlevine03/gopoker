@@ -18,7 +18,7 @@ func binomial(n, k int) int {
 	return c
 }
 
-// Combinations generates all combinations of size k from the input slice
+// Combinations generates all combinations of size k from the input array (of size n)
 func Combinations(arr []uint32, size int) [][]uint32 {
 	n := len(arr)
 	result := make([][]uint32, 0, binomial(n, size))

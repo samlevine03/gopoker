@@ -2,6 +2,7 @@ package poker
 
 import (
 	"runtime"
+	"sync"
 )
 
 type Calculator struct {
@@ -20,7 +21,6 @@ func (c *Calculator) SetDeck(deck *Deck) {
 	c.deck = deck
 }
 
-// CalculateEquity handles equity calculation for 2 to 9 players
 func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	// Remove player hands from the deck
 	for _, hand := range playerHands {
@@ -30,8 +30,6 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	possibleBoards := Combinations(remainingDeck, 5)
 
 	numPlayers := len(playerHands)
-	playerWins := make([]int, numPlayers)
-	playerTies := make([]int, numPlayers)
 	totalBoards := len(possibleBoards)
 
 	// Use a channel to collect results
@@ -41,47 +39,65 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	numWorkers := runtime.GOMAXPROCS(0)
 	boardChunks := chunkBoards(possibleBoards, numWorkers)
 
+	var wg sync.WaitGroup
+	wg.Add(len(boardChunks))
+
 	for _, boardChunk := range boardChunks {
 		go func(boardChunk [][]uint32) {
+			defer wg.Done()
 			localWins := make([]int, numPlayers)
 			localTies := make([]int, numPlayers)
+			scores := make([]int, numPlayers)
+
 			for _, board := range boardChunk {
-				boardCards := []uint32{uint32(board[0]), uint32(board[1]), uint32(board[2]), uint32(board[3]), uint32(board[4])}
-				scores := make([]int, numPlayers)
 				bestScore := LookupTableMaxHighCard + 1
 
 				// Evaluate each player's hand
 				for i, hand := range playerHands {
-					scores[i] = c.evaluator.Evaluate(hand, boardCards)
+					scores[i] = c.evaluator.Evaluate(hand, board)
 					if scores[i] < bestScore {
 						bestScore = scores[i]
 					}
 				}
 
 				// Count winners and check for ties
-				var winners []int
+				winners := 0
 				for i := 0; i < numPlayers; i++ {
 					if scores[i] == bestScore {
-						winners = append(winners, i)
+						winners++
 					}
 				}
 
 				// If more than one player has the best score, it's a tie
-				if len(winners) > 1 {
-					for _, winner := range winners {
-						localTies[winner]++
+				if winners > 1 {
+					for i := 0; i < numPlayers; i++ {
+						if scores[i] == bestScore {
+							localTies[i]++
+						}
 					}
 				} else {
-					localWins[winners[0]]++
+					for i := 0; i < numPlayers; i++ {
+						if scores[i] == bestScore {
+							localWins[i]++
+							break
+						}
+					}
 				}
 			}
 			results <- [2][]int{localWins, localTies}
 		}(boardChunk)
 	}
 
+	// Close the results channel when all workers are done
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
 	// Collect results from all workers
-	for i := 0; i < numWorkers; i++ {
-		res := <-results
+	playerWins := make([]int, numPlayers)
+	playerTies := make([]int, numPlayers)
+	for res := range results {
 		for j := 0; j < numPlayers; j++ {
 			playerWins[j] += res[0][j]
 			playerTies[j] += res[1][j]
@@ -91,7 +107,7 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	// Calculate equities
 	playerEquities := make([]float64, numPlayers)
 	for i := 0; i < numPlayers; i++ {
-		playerEquities[i] = (float64(playerWins[i]) + float64(playerTies[i])/float64(len(playerHands))) / float64(totalBoards) * 100
+		playerEquities[i] = (float64(playerWins[i]) + float64(playerTies[i])/float64(numPlayers)) / float64(totalBoards) * 100
 	}
 
 	return playerEquities
