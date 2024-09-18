@@ -18,38 +18,35 @@ func binomial(n, k int) int {
 	return c
 }
 
+// Combinations generates all combinations of size k from the input slice
 func Combinations(arr []uint32, size int) [][]uint32 {
 	n := len(arr)
 	result := make([][]uint32, 0, binomial(n, size))
 	indices := make([]int, size)
-	combination := make([]uint32, size)
-	for i := 0; i < size; i++ {
+	for i := range indices {
 		indices[i] = i
 	}
+
 	for {
+		combination := make([]uint32, size)
 		for i, index := range indices {
 			combination[i] = arr[index]
 		}
+		result = append(result, combination)
 
-		// result = append(result, combination) // This is a bug
-		// Since slices are references to the underlying array, we need to copy the slice
-		// Otherwise, the slice will be overwritten in the next iteration
-
-		combCopy := make([]uint32, size)
-		copy(combCopy, combination)
-		result = append(result, combCopy)
-
+		// Generate next combination
 		i := size - 1
-		for i >= 0 && indices[i] == len(arr)-size+i {
+		for i >= 0 && indices[i] == n-size+i {
 			i--
 		}
 		if i < 0 {
-			return result
+			break
 		}
-
 		indices[i]++
 		for j := i + 1; j < size; j++ {
 			indices[j] = indices[j-1] + 1
 		}
 	}
+
+	return result
 }
