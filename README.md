@@ -3,7 +3,7 @@
 ## TODO:
  - [ ] CLI
  - [ ] Further optimization?
- - [ ] Benchmarks for hand evaluation speed
+ - [X] Benchmarks
  - [ ] Usage instructions / examples (aka finish this README)
 
 ## Motivation
