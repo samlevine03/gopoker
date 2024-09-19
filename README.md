@@ -18,8 +18,7 @@ to calculate the equity.
 To check out the benchmarks, run `./bench.sh`. If you can't run the script, try running `chmod +x bench.sh` first. 
 You can also just run `go test ./benchmarks -bench=. -v` in the root directory.
 
-This will run two tests, one for hand evaluation, and the other for heads-up preflop equity calculation. It should take around 15-20 seconds for this to complete. We include the `-benchtime=5` flag to increase the benchmark time to 5 seconds, 
-as the default 1 second is too short to get useful results for equity calculation (which is the slower of the two benchmarks).
+This will run two tests, one for hand evaluation, and the other for heads-up preflop equity calculation. 
 
 
 ### Hand Evaluation
