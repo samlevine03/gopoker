@@ -13,6 +13,15 @@ I want to do so without using any external libraries, and without using any
 external data sources. Furthermore, I didn't want to use a Monte Carlo simulation
 to calculate the equity. 
 
+## Benchmarks
+
+To check out the benchmarks, run `./bench.sh`. If you can't run the script, try running `chmod +x bench.sh` first. 
+You can also just run `go test ./benchmarks -bench=. -v` in the root directory.
+
+This will run two tests, one for hand evaluation, and the other for heads-up preflop equity calculation. It should take around 15-20 seconds for this to complete. We include the `-benchtime=5` flag to increase the benchmark time to 5 seconds, 
+as the default 1 second is too short to get useful results for equity calculation (which is the slower of the two benchmarks).
+
+
 ### Hand Evaluation
 
 My approach is based on [Cactus Kev's Poker Hand Evaluator.](http://suffe.cool/poker/evaluator.html)
