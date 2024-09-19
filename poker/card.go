@@ -34,7 +34,7 @@ func NewCard(cardStr string) uint32 {
 
 	//        bitRank     suit rank   prime
 	// +--------+--------+--------+--------+
-	// |___bbbbb|bbbbbbbb|cdhsrrrr|__pppppp|
+	// |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
 	// +--------+--------+--------+--------+
 
 	return uint32(bitRank | suit | rank | Primes[rankInt])
