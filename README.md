@@ -13,13 +13,22 @@ I want to do so without using any external libraries, and without using any
 external data sources. Furthermore, I didn't want to use a Monte Carlo simulation
 to calculate the equity. 
 
+## Usage
+
+CLI WORK IN PROGRESS
+
+For now, update main.go with your own hands and run:
+
+```bash
+go run main.go
+```
+
 ## Benchmarks
 
 To check out the benchmarks, run `./bench.sh`. If you can't run the script, try running `chmod +x bench.sh` first. 
 You can also just run `go test ./benchmarks -bench=. -v` in the root directory.
 
-This will run two tests, one for hand evaluation, and the other for heads-up preflop equity calculation. 
-
+This will run two tests, one for hand evaluation, and the other for heads-up preflop equity calculation.
 
 ### Hand Evaluation
 
