@@ -1,3 +1,3 @@
-module github.com/samlevine03/gopoker
+module gopoker
 
 go 1.23.0
