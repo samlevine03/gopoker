@@ -68,7 +68,7 @@ func PrimeProductFromHand(cards []uint32) int {
 func (table *LookupTable) flushes() {
 	// Straight flushes in rank order
 	straightFlushes := []int{
-		7936, 3968, 1984, 992, 496, 248, 124, 62, 31, 4111, // Royal flush down to 5-high straight flush
+		7936, 3968, 1984, 992, 496, 248, 124, 62, 31, 4111, // Royal flush down to wheel straight flush
 	}
 
 	// Generate all other flushes
