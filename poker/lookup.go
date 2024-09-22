@@ -229,16 +229,20 @@ func (table *LookupTable) multiples() {
 }
 
 // generateNextLexicographicalBitSequence generates the next lexicographical bit sequence
+// For example, given the bit pattern 0b011 (3 in decimal), the next lexicographical bit sequence is 0b101 (5 in decimal).
+// This function returns a channel that produces these sequences.
+//
+// Example:
+// Input: 0b011 (3 in decimal)
+// Output: 0b101 (5 in decimal), 0b110 (6 in decimal), ...
 func (table *LookupTable) generateNextLexicographicalBitSequence(bits int) chan int {
 	ch := make(chan int)
 	go func() {
-		t := (bits | (bits - 1)) + 1
-		next := t | (((t & -t) / (bits & -bits)) >> 1) - 1
-		ch <- next
 		for {
-			t = (next | (next - 1)) + 1
-			next = t | (((t & -t) / (next & -next)) >> 1) - 1
+			t := (bits | (bits - 1)) + 1
+			next := t | (((t & -t) / (bits & -bits)) >> 1) - 1
 			ch <- next
+			bits = next
 		}
 	}()
 	return ch

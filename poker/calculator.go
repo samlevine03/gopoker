@@ -22,7 +22,6 @@ func (c *Calculator) SetDeck(deck *Deck) {
 }
 
 func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
-	// Remove player hands from the deck
 	for _, hand := range playerHands {
 		c.deck.RemoveCards(hand)
 	}
