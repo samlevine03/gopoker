@@ -41,27 +41,7 @@ func (e *Evaluator) _five(cards []uint32) int {
 
 // _seven evaluates all 7 choose 5 combinations of a 7-card hand
 func (e *Evaluator) _seven(cards []uint32) int {
-	// Check for flush possibility
-	suitCounts := [4]int{}
-	for _, card := range cards {
-		suit := (card >> 12) & 0xF
-		if suit < 4 { // Ensure suit is valid
-			suitCounts[suit]++
-		}
-	}
-
-	for suit, count := range suitCounts {
-		if count >= 5 {
-			flushCards := make([]uint32, 0, 7)
-			for _, card := range cards {
-				if int(card>>12&0xF) == suit {
-					flushCards = append(flushCards, card)
-				}
-			}
-			return e._flushSeven(flushCards)
-		}
-	}
-
+	// TODO: can we do better than just brute forcing all of these combinations
 	minScore := LookupTableMaxHighCard
 	combinations := Combinations(cards, 5)
 
@@ -74,20 +54,9 @@ func (e *Evaluator) _seven(cards []uint32) int {
 	return minScore
 }
 
-func (e *Evaluator) _flushSeven(flushCards []uint32) int {
-	minScore := LookupTableMaxHighCard
-	combinations := Combinations(flushCards, 5)
-	for _, combo := range combinations {
-		score := e._five(combo)
-		if score < minScore {
-			minScore = score
-		}
-	}
-	return minScore
-}
-
 // GetRankClass returns the rank class of a hand
 func (e *Evaluator) GetRankClass(handRank int) int {
+	// TODO: consider making this error handling nicer rather than just panicking
 	switch {
 	case handRank >= 0 && handRank <= LookupTableMaxRoyalFlush:
 		return LookupTableMaxToRankClass[LookupTableMaxRoyalFlush]

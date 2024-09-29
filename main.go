@@ -8,6 +8,7 @@ import (
 
 func main() {
 	playerHands := [][]uint32{
+		// TODO: once made into a CLI, need to make sure all input hands are unique
 		{poker.NewCard("As"), poker.NewCard("Ks")},
 		{poker.NewCard("Qh"), poker.NewCard("Qd")},
 		{poker.NewCard("6c"), poker.NewCard("7c")},

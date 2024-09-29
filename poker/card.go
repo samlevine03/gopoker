@@ -10,6 +10,8 @@ const (
 	IntRanks = 13
 )
 
+var Primes = [IntRanks]int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41}
+
 var charRankToIntRank = map[rune]int{
 	'2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5,
 	'8': 6, '9': 7, 'T': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12,
@@ -25,6 +27,7 @@ var prettySuits = map[int]string{
 
 // NewCard creates a card from its string representation like "As" (Ace of Spades).
 func NewCard(cardStr string) uint32 {
+	// TODO: error handling for malformed inputs
 	rankInt := charRankToIntRank[rune(cardStr[0])]
 	suitInt := charSuitToIntSuit[rune(cardStr[1])]
 
@@ -40,17 +43,9 @@ func NewCard(cardStr string) uint32 {
 	return uint32(bitRank | suit | rank | Primes[rankInt])
 }
 
-func GetRankInt(card uint32) int {
-	return int((card >> 8) & 0xF)
-}
-
-func GetSuitInt(card uint32) int {
-	return int((card >> 12) & 0xF)
-}
-
 func PrettyPrintCard(card uint32) {
-	rankInt := GetRankInt(card)
-	suitInt := GetSuitInt(card)
+	rankInt := int((card >> 8) & 0xF)  // Get rank int
+	suitInt := int((card >> 12) & 0xF) // Get suit int
 	fmt.Printf("[%s%s]", string(StrRanks[rankInt]), prettySuits[suitInt])
 }
 

@@ -58,7 +58,7 @@ func PrimeProductFromRankBits(rankBits int) int {
 func PrimeProductFromHand(cards []uint32) int {
 	product := 1
 	for _, card := range cards {
-		// Prime product is stored in the lower 6 bits of the card representation
+		// Prime rank is stored in the lower 6 bits of the card representation
 		product *= int(card & 0x3F)
 	}
 	return product

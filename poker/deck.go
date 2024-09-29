@@ -31,6 +31,8 @@ func (d *Deck) Shuffle() {
 
 // Draw n cards from the deck
 func (d *Deck) Draw(n int) []uint32 {
+	// TODO: is this how we want to handle drawing more cards than possible?
+	// May just want to return an error
 	if n > len(d.cards) {
 		n = len(d.cards)
 	}
@@ -56,6 +58,10 @@ func GetFullDeck() []uint32 {
 
 // RemoveCards removes specific cards from the deck.
 func (d *Deck) RemoveCards(cardsToRemove []uint32) {
+	// TODO: Do something like Insert/Delete/GetRandom O(1) to make this faster?
+	// Obviously optimizing here doesn't really matter lol, it's really just
+	// a question of if there's a nicer way to do this.
+	// TODO: if the card is not already in the deck, return an error?
 	cardMap := make(map[uint32]bool, len(cardsToRemove))
 
 	// Populate the cardMap for fast lookup
