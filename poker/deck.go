@@ -11,7 +11,6 @@ type Deck struct {
 
 // fullDeck is the static full deck, initialized once
 var fullDeck []uint32
-
 var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func NewDeck(seed int64) *Deck {
@@ -31,8 +30,6 @@ func (d *Deck) Shuffle() {
 
 // Draw n cards from the deck
 func (d *Deck) Draw(n int) []uint32 {
-	// TODO: is this how we want to handle drawing more cards than possible?
-	// May just want to return an error
 	if n > len(d.cards) {
 		n = len(d.cards)
 	}
@@ -58,23 +55,18 @@ func GetFullDeck() []uint32 {
 
 // RemoveCards removes specific cards from the deck.
 func (d *Deck) RemoveCards(cardsToRemove []uint32) {
-	// TODO: Do something like Insert/Delete/GetRandom O(1) to make this faster?
-	// Obviously optimizing here doesn't really matter lol, it's really just
-	// a question of if there's a nicer way to do this.
-	// TODO: if the card is not already in the deck, return an error?
-	cardMap := make(map[uint32]bool, len(cardsToRemove))
-
-	// Populate the cardMap for fast lookup
+	removeMap := make(map[uint32]bool)
 	for _, card := range cardsToRemove {
-		cardMap[card] = true
+		removeMap[card] = true
 	}
 
-	// Filter the deck in-place to avoid multiple slice reallocations
-	filteredCards := d.cards[:0] // Reuse the slice memory
+	newSize := 0
 	for _, card := range d.cards {
-		if !cardMap[card] {
-			filteredCards = append(filteredCards, card)
+		if !removeMap[card] {
+			d.cards[newSize] = card
+			newSize++
 		}
 	}
-	d.cards = filteredCards
+
+	d.cards = d.cards[:newSize]
 }

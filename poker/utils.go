@@ -48,3 +48,17 @@ func Combinations(arr []uint32, size int) [][]uint32 {
 
 	return result
 }
+
+// chunkCombos splits the input array into numChunks chunks
+func chunkCombos(boards [][]uint32, numChunks int) [][][]uint32 {
+	chunkSize := (len(boards) + numChunks - 1) / numChunks
+	var chunks [][][]uint32
+	for i := 0; i < len(boards); i += chunkSize {
+		end := i + chunkSize
+		if end > len(boards) {
+			end = len(boards)
+		}
+		chunks = append(chunks, boards[i:end])
+	}
+	return chunks
+}

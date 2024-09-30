@@ -33,7 +33,7 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 
 	// Set up a worker pool with goroutines
 	numWorkers := runtime.GOMAXPROCS(0)
-	boardChunks := chunkBoards(possibleBoards, numWorkers)
+	boardChunks := chunkCombos(possibleBoards, numWorkers)
 
 	// Use a channel to collect results
 	results := make(chan [2][]int, totalBoards) // 2D array, first is wins, second is ties
@@ -104,17 +104,4 @@ func (c *Calculator) CalculateEquity(playerHands [][]uint32) []float64 {
 	}
 
 	return playerEquities
-}
-
-func chunkBoards(boards [][]uint32, numChunks int) [][][]uint32 {
-	chunkSize := (len(boards) + numChunks - 1) / numChunks
-	var chunks [][][]uint32
-	for i := 0; i < len(boards); i += chunkSize {
-		end := i + chunkSize
-		if end > len(boards) {
-			end = len(boards)
-		}
-		chunks = append(chunks, boards[i:end])
-	}
-	return chunks
 }
