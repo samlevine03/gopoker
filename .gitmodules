@@ -1,0 +1,3 @@
+[submodule "gopoker"]
+	path = gopoker
+	url = https://github.com/samlevine03/gopoker.git
