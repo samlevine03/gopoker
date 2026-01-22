@@ -22,7 +22,7 @@ func main() {
 	for i := 1; i < len(os.Args); i++ {
 		handStr := os.Args[i]
 		cards := strings.Split(handStr, ",")
-		
+
 		if len(cards) != 2 {
 			fmt.Printf("Error: Each hand must have exactly 2 cards, got %d in '%s'\n", len(cards), handStr)
 			os.Exit(1)
@@ -31,17 +31,17 @@ func main() {
 		hand := make([]uint32, 2)
 		for j, cardStr := range cards {
 			cardStr = strings.TrimSpace(cardStr)
-			
+
 			// Check for duplicates
 			if usedCards[cardStr] {
 				fmt.Printf("Error: Duplicate card: %s\n", cardStr)
 				os.Exit(1)
 			}
 			usedCards[cardStr] = true
-			
+
 			hand[j] = poker.NewCard(cardStr)
 		}
-		
+
 		playerHands = append(playerHands, hand)
 	}
 
